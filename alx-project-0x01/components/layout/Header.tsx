@@ -1,4 +1,5 @@
 import Link from "next/link";
+import index from "@/pages/users";
 
 const Header: React.FC = () => {
     return(
@@ -11,6 +12,7 @@ const Header: React.FC = () => {
                         <li className="hover:underline"><Link href="/">Users</Link></li>
                     </ul>
                 </nav>
+                
             </div>
         </header>
     )
