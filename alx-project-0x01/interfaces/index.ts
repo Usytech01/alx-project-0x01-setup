@@ -6,3 +6,11 @@
     title: string;
     body: string;
 }
+
+
+export interface UserCardProps{
+    name: string;
+    email: string;
+    role?: string;
+
+}
