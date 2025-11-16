@@ -7,10 +7,20 @@
     body: string;
 }
 
-
-export interface UserCardProps{
+export interface UserProps{
+    id: number;
     name: string;
+    username: string;
     email: string;
-    role?: string;
-
+    address: {street:string; suit: string; city:string; zipcode:string; 
+        geo:{lat:string; lng: string;
+        };
+    };
+    phone: string;
+    website: string;
+    company: {
+        name: string;
+        catchPhrase: string;
+        bs: string;
+    };
 }
