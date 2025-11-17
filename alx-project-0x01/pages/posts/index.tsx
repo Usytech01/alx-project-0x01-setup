@@ -1,60 +1,51 @@
-import Header from "@/components/layout/Header";
 import PostCard from "@/components/common/PostCard";
+import PostModal from "@/components/common/PostModalProps";
+import Header from "@/components/layout/Header";
 import { PostProps } from "@/interfaces";
-import UserCard from "@/components/common/UserCard";
+import { PostData } from "@/interfaces";
+import { useState } from "react";
 
-const Post: React.FC = () => {
+
+const Posts: React.FC<PostProps[]> = ({ posts }) => {
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [post, setPost] = useState<PostData | null> (null);
+
+    const handleAddPost = (newPost: PostData) => {
+        setPost({...newPost, id: posts.length + 1});
+    };
+
     return (
-        <div>
+        <div className="flex flex-col h-screen">
             <Header />
-            <main>
+            <main className="p-4">
                 <div className="flex justify-between">
-                    <h1 className="text-2x1 font-semibold">Post Content</h1>
-                    <button className="bg-blue-700 px-4 py-2 rounded-full text-white">Add Post</button>
+                    <h1 className="text-2xl font-semibold">Post Content</h1>
+                    <button onClick={() => setModalOpen(true)}>Add Post</button>
                 </div>
-                    <div className="grid grid-cols-3 gap-2">
-                        {
-                            Post?.map(({ title, body, userId, id}: PostProps, key: number) => (
-                                <PostCard title={title} body={body} userId={userId} id={id} key={key} />
-                                
-                            ))
-                        }
-                    </div>
+                <div className="grid grid-cols-3 gap-2">
+                    {
+                        posts?.map(({ title, body, userId, id }: PostProps, key: number) => (<PostCard title={title} body={body} userId={userId} id={id} key={key} posts={undefined}/>))
+                    }
+                </div>
             </main>
-        </div>
-    )
-}
 
-const users =[
-    { name: "John Doe", email: "john@example.com", role: "Admin"},
-    { name: "Jane Smith", email: "jane@example.com", role: "Editor"},
-    { name: "Michael Brown", email: "michael@example.com", role: "Users"},
-]
-
-const Users = () => {
-    return(
-        <div>
-            {users.map((user, index) => (
-                <UserCard 
-                key={index}
-                name={user.name}
-                email={user.email}
-                role={user.role}
-                />
-            ))}
+            {isModalOpen && (
+                <PostModal onClose={() => setModalOpen(false)} onSubmit={handleAddPost} />
+             )}
         </div>
     )
 }
 
 export async function getStaticProps() {
-    const response = await fetch ("https://jsonplaceholder.typicode.com/posts")
+    const response = await
+    fetch("https://jsonplaceholder.typicode.com/posts")
     const posts = await response.json()
+
     return{
-        Props:{
+        props: {
             posts
         }
     }
+    
 }
-
-export default Post;
-
+export default Posts;
