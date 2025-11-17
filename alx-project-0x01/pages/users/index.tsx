@@ -1,50 +1,52 @@
+import { useState } from "react";
+import UserModal from "@/components/common/UserModal";
 import UserCard from "@/components/common/UserCard";
-import { UserProps } from "@/interfaces";
+import { UserData } from "@/interfaces";
 
-/*Defines the type for the page component’s props. This page expects a posts prop which is an array of UserProps.
-Note about naming: the variable is called posts in your getStaticProps return.*/
-interface UsersPageProps{ posts: UserProps[]; }
+interface UsersPageProps {
+  users: UserData[];
+}
 
 export async function getStaticProps() {
-    const response = await fetch("https://jsonplaceholder.typicode.com/users");
-    const posts = await response.json();
+  const response = await fetch("https://jsonplaceholder.typicode.com/users");
+  const users = await response.json();
 
-    return{
-        props: { posts, },
-    };
+  return {
+    props: {
+      users,
+    },
+  };
 }
 
-/* Declares the Users React component typed with UsersPageProps. It receives posts via props (populated by getStaticProps). */
-/* Loops through every item in the posts array and Returns a new array, arrow function that receives each individual item from the array. */
-const Users: React.FC<UsersPageProps> = ({ posts }) => {
-    return(
-        <div className="continer mx-auto py-10 grid grid-cols-1">
-            {posts.map((user) => (
-               <UserCard
-                    key={user.id}
-                    id={user.id}
-                    name={user.name}
-                    email={user.email}
-                    username={user.username} address={{
-                        street: "",
-                        suit: "",
-                        city: "",
-                        zipcode: "",
-                        geo: {
-                            lat: "",
-                            lng: ""
-                        }
-                    }} phone={""} website={""} company={{
-                        name: "",
-                        catchPhrase: "",
-                        bs: ""
-                    }} street={""}               />
-            ))}
-        </div>
-    
-    
-    )
+const Users: React.FC<UsersPageProps> = ({ users }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [userList, setUserList] = useState(users);
 
-}
+  function handleAddUser(newUser: UserData) {
+    setUserList([...userList, { ...newUser, id: userList.length + 1 }]);
+    setShowModal(false);
+  }
+
+  return (
+    <div className="container mx-auto py-10">
+      <button
+        onClick={() => setShowModal(true)}
+        className="mb-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+      >
+        Add User
+      </button>
+
+      {showModal && (
+        <UserModal onClose={() => setShowModal(false)} onSubmit={handleAddUser} />
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {userList.map((user) => (
+          <UserCard street={""} key={user.id} {...user} />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default Users;
